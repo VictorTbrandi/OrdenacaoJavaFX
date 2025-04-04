@@ -4,18 +4,17 @@ import java.util.Random;
 
 public class Radix {
     int[] vet;
+    int tl;
 
     public Radix() {
         vet = new int[10];
-    }
-    public void preencheVetor(){
+        tl = 0;
         Random rand = new Random();
         HashSet<Integer> valores = new HashSet<>();
-        int i = 0;
         while (valores.size() < 10) {
-            int num = rand.nextInt(10);
-            if (valores.add(num+1))
-                vet[i++] = num + 1;
+            int num = rand.nextInt(10) + 1;
+            if (valores.add(num))
+                vet[tl++] = num;
         }
     }
 
@@ -33,22 +32,40 @@ public class Radix {
 
     public void radixSort(){
         int max = max();
-        for (int dgt = 1; max/dgt > 0 ; dgt *= 10) {
+        int[] vet_ordenado = new int[tl];
+        for (int dgt = 1; dgt <= max; dgt *= 10) {
             int[] counting = new int[10];
-            int[] vet_ordenado = new int[vet.length];
-
-            for (int i = 0; i < vet.length; i++)
+            for (int i = 0; i < tl; i++)
                 counting[(vet[i] / dgt) % 10]++;
 
-            for (int i = 1; i < counting.length; i++)
+            for (int i = 1; i < 10; i++)
                 counting[i] += counting[i - 1];
 
-            for (int i = vet.length - 1; i >= 0; i--) {
+            for (int i = tl - 1; i >= 0; i--) {
                 int pos = (vet[i] / dgt) % 10;
                 vet_ordenado[counting[pos] - 1] = vet[i];
                 counting[pos]--;
             }
-            setVet(vet_ordenado);
+            int[] aux = vet;
+            vet = vet_ordenado;
+            vet_ordenado = aux;
+        }
+    }
+
+    public void combSort(){
+        int intervalo = (int) (tl/1.3);
+        boolean flag = true;
+
+        while(intervalo > 1 || flag){
+            flag = false;
+            for (int i = intervalo; i < tl; i++)
+                if(vet[i] < vet[i-intervalo]){
+                    int aux = vet[i];
+                    vet[i] = vet[i-intervalo];
+                    vet[i-intervalo] = aux;
+                    flag = true;
+                }
+            intervalo = Math.max((int) (intervalo / 1.3), 1);
         }
     }
 
@@ -57,11 +74,9 @@ public class Radix {
     }
     public static void main(String[] args) {
         Radix radix = new Radix();
-        radix.preencheVetor();
-        System.out.println("Randomico");
+
         radix.exibeVet();
         radix.radixSort();
-        System.out.println("Ordenado");
         radix.exibeVet();
     }
 }
