@@ -65,7 +65,8 @@ public class Radix {
                     vet[i-intervalo] = aux;
                     flag = true;
                 }
-            intervalo = Math.max((int) (intervalo / 1.3), 1);
+            if(intervalo > 1)
+                intervalo = (int) (intervalo/1.3);
         }
     }
 
